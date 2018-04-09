@@ -1,65 +1,10 @@
 \documentclass{article}
-\usepackage{xparse}
-\usepackage{datatool}
-
-\ExplSyntaxOn
-
-\DTLnewdb{_mymodule_authors}
-
-\seq_new:N \l_mymodule_author_affiliations_seq
-
-\keys_define:nn { mymodule/authors }
- {
-  affiliation .code:n = \seq_put_right:Nn \l_mymodule_author_affiliations_seq {#1}
- }
-
-\cs_new_protected:Nn \_mymodule_authors:n
- {
-  \DTLnewrow{_mymodule_authors}
-  \DTLnewdbentry{_mymodule_authors}{name}{#1}
-  \DTLnewdbentry{_mymodule_authors}{affiliations}{\tl_to_str:n{#1}}
- }
-
-\RenewDocumentCommand \author { O{} m }
- {
-  \seq_clear:N \l_mymodule_author_affiliations_seq
-  \keys_set:nn { mymodule/authors } { #1 }
-  \_mymodule_authors:n {#2}
-  \seq_new:c { g_mymodule_affiliation_ \tl_to_str:n{#2} _seq }
-  \seq_gset_eq:cN { g_mymodule_affiliation_ \tl_to_str:n{#2} _seq } \l_mymodule_author_affiliations_seq
- }
-
-\NewDocumentCommand \showauthors {  }
- {
-  \DTLforeach*{_mymodule_authors}
-   {
-    \l_tmpa_tl=name,
-    \l_tmpb_tl=affiliations
-   }
-   {
-    \mymodule_display_author:VV \l_tmpa_tl \l_tmpb_tl
-    \DTLiflastrow { }{ \DTLpar }
-   }
- }
-
-\cs_new_protected:Nn \mymodule_display_author:nn
- {
-  #1
-  \seq_if_empty:cF { g_mymodule_affiliation_#2_seq }
-  {
-   \c_space_tl(\seq_use:cn { g_mymodule_affiliation_#2_seq } { ,~ })
-  }
- }
-
-\cs_generate_variant:Nn \mymodule_display_author:nn { VV }
-
-\ExplSyntaxOff
-
+  \usepackage[utf8]{inputenc}
+  \usepackage[russian]{babel}
+ 
 \begin{document}
-\author{Foo, Bar 0}
-\author[affiliation=Blah]{Foo, Bar 1}
-\author[affiliation=Bleh,affiliation=Blih]{Foo, Bar 2}
-\author[affiliation=Bloh,affiliation=Bluh,affiliation=Blyh]{Foo, Bar 3}
-
-\showauthors
+   Краткость ~--- сестра таланта.
+   Весь текст надо печатать в этой области здесь.
 \end{document}
+А вот этот текст уже не отобразиться - 
+так как он идет после "\end{document}"
